@@ -10,7 +10,7 @@ func TestGoErrors(t *testing.T) {
 		t.Fatalf("wrong Kind of error")
 	}
 
-	strace := err.GetStack(2)
+	strace := err.GetStackTrace(2)
 	if len(strace) == 0 {
 		t.Fatalf("stacktrace is empty")
 	}

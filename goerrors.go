@@ -35,7 +35,7 @@ func (e err) GetMessage() string {
 	return e.message
 }
 
-func (e err) GetStack(depth int) string {
+func (e err) GetStackTrace(depth int) string {
 	frames := e.stack.GetFrames()
 	if len(frames) < depth {
 		return frames.ToString()
