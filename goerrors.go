@@ -66,7 +66,7 @@ func NewBadRequestErr() err {
 
 func NewInternalErr() err {
 	return err{
-		kind:  ErrBadRequest,
+		kind:  ErrInternal,
 		stack: gostacktrace.Get(3),
 	}
 }
