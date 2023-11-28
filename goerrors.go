@@ -2,6 +2,7 @@ package goerrors
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/severuykhin/gostacktrace"
 )
@@ -11,6 +12,7 @@ type (
 		kind    kind
 		message string
 		stack   gostacktrace.StackTrace
+		context map[string]interface{}
 	}
 )
 
@@ -20,6 +22,33 @@ func (e err) Error() string {
 
 func (e err) WithMessage(message string) err {
 	e.message = message
+	return e
+}
+
+func (e err) WithContext(keyvals ...interface{}) err {
+
+	keyvalsLength := len(keyvals)
+
+	if keyvalsLength == 0 {
+		return e
+	}
+
+	errCtx := context{}
+
+	for i := 0; i < keyvalsLength; i++ {
+		if i > 0 && i%2 != 0 {
+			continue
+		}
+
+		if i == keyvalsLength-1 {
+			errCtx[valueToString(keyvals[i])] = ""
+		} else {
+			errCtx[valueToString(keyvals[i])] = valueToString(keyvals[i+1])
+		}
+	}
+
+	e.context = errCtx
+
 	return e
 }
 
@@ -33,6 +62,10 @@ func (e err) GetKind() kind {
 
 func (e err) GetMessage() string {
 	return e.message
+}
+
+func (e err) GetContext() context {
+	return e.context
 }
 
 func (e err) GetStackTrace(depth int) string {
@@ -68,5 +101,18 @@ func NewInternalErr() err {
 	return err{
 		kind:  ErrInternal,
 		stack: gostacktrace.Get(3),
+	}
+}
+
+func valueToString(val interface{}) string {
+	switch v := val.(type) {
+	case int:
+		return strconv.Itoa(v)
+	case string:
+		return v
+	case error:
+		return v.Error()
+	default:
+		return "unknowntype"
 	}
 }
