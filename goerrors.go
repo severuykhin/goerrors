@@ -106,7 +106,7 @@ func NewInternalErr() err {
 
 func NewNotFoundErr() err {
 	return err{
-		kind:  ErrInternal,
+		kind:  ErrNotFound,
 		stack: gostacktrace.Get(3),
 	}
 }
