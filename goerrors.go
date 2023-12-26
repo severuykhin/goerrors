@@ -104,6 +104,13 @@ func NewInternalErr() err {
 	}
 }
 
+func NewNotFoundErr() err {
+	return err{
+		kind:  ErrInternal,
+		stack: gostacktrace.Get(3),
+	}
+}
+
 func valueToString(val interface{}) string {
 	switch v := val.(type) {
 	case int:
