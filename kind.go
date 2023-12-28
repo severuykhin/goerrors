@@ -5,7 +5,8 @@ type (
 )
 
 const (
-	ErrBadRequest kind = "ErrBadRequest"
-	ErrNotFound   kind = "ErrNotFound"
-	ErrInternal   kind = "ErrInternal"
+	ErrBadRequest  kind = "ErrBadRequest"
+	ErrNotFound    kind = "ErrNotFound"
+	ErrInternal    kind = "ErrInternal"
+	ErrAcessDenied kind = "ErrAccessDenied"
 )

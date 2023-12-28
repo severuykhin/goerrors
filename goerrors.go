@@ -111,6 +111,13 @@ func NewNotFoundErr() err {
 	}
 }
 
+func NewAccessDeniedErr() err {
+	return err{
+		kind:  ErrAcessDenied,
+		stack: gostacktrace.Get(3),
+	}
+}
+
 func valueToString(val interface{}) string {
 	switch v := val.(type) {
 	case int:
