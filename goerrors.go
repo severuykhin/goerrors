@@ -113,7 +113,7 @@ func NewNotFoundErr() err {
 
 func NewAccessDeniedErr() err {
 	return err{
-		kind:  ErrAcessDenied,
+		kind:  ErrAccessDenied,
 		stack: gostacktrace.Get(3),
 	}
 }
