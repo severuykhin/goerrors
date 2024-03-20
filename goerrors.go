@@ -118,6 +118,13 @@ func NewAccessDeniedErr() err {
 	}
 }
 
+func NewConflictErr() err {
+	return err{
+		kind:  ErrConflict,
+		stack: gostacktrace.Get(3),
+	}
+}
+
 func valueToString(val interface{}) string {
 	switch v := val.(type) {
 	case int:

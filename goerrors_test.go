@@ -20,4 +20,9 @@ func TestGoErrors(t *testing.T) {
 	if len(errCtxList) != 8 {
 		t.Fatalf("wrong number of context keyvalues")
 	}
+
+	err2 := NewConflictErr().WithMessage("sdfsdfsdf")
+	if err2.kind != ErrConflict {
+		t.Fatalf("wrong kind of error")
+	}
 }
