@@ -1,4 +1,4 @@
-module github.com/severuykhin/goerrors
+module github.com/severuykhin/goerrors/v2
 
 go 1.21
 
