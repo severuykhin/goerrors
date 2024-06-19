@@ -9,6 +9,15 @@ func provideInvalidValueError(message string, code string) error {
 	return NewInvalidValueErr(message).WithCode(code).WithStack(2)
 }
 
+func provideMultiError(errors ...error) error {
+	return NewMultiError(errors...)
+}
+
+func TestAll(t *testing.T) {
+	TestGoError(t)
+	TestMultiError(t)
+}
+
 func TestGoError(t *testing.T) {
 
 	err := provideInvalidValueError("some message", "Email.Invalid")
@@ -60,4 +69,22 @@ func TestMultiError(t *testing.T) {
 	if mError == nil {
 		t.Fatalf("Multierror should not be nil")
 	}
+
+	someError := provideMultiError(err1, err2)
+	multiErrorAsDomainError := From(someError)
+
+	if multiErrorAsDomainError.GetKind() != ErrMulti {
+		t.Fatalf("error must be parsed as ErrMulti")
+	}
+
+	innerErrors := multiErrorAsDomainError.GetInnerErrors()
+	if len(innerErrors) == 0 {
+		t.Fatalf("inner errors must not be empty")
+	}
+
+	firstErr := innerErrors[0]
+	if !Is(firstErr, ErrInvalidValue) {
+		t.Fatalf("first error must be kind of ErrInvalidValue")
+	}
+
 }

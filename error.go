@@ -125,7 +125,7 @@ func (e err) GetContext() context {
 	return e.context
 }
 
-func (e err) GetInnerErrors() []err {
+func (e err) GetInnerErrors() multiError {
 	return e.innerErrors
 }
 
