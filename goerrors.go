@@ -1,88 +1,22 @@
 package goerrors
 
 import (
-	"fmt"
-	"strconv"
-
-	"github.com/severuykhin/gostacktrace"
+	"encoding/json"
 )
-
-type (
-	err struct {
-		kind    kind
-		message string
-		stack   gostacktrace.StackTrace
-		context map[string]interface{}
-	}
-)
-
-func (e err) Error() string {
-	return fmt.Sprintf("[%s]: %s", e.kind, e.message)
-}
-
-func (e err) WithMessage(message string) err {
-	e.message = message
-	return e
-}
-
-func (e err) WithContext(keyvals ...interface{}) err {
-
-	keyvalsLength := len(keyvals)
-
-	if keyvalsLength == 0 {
-		return e
-	}
-
-	errCtx := context{}
-
-	for i := 0; i < keyvalsLength; i++ {
-		if i > 0 && i%2 != 0 {
-			continue
-		}
-
-		if i == keyvalsLength-1 {
-			errCtx[valueToString(keyvals[i])] = ""
-		} else {
-			errCtx[valueToString(keyvals[i])] = valueToString(keyvals[i+1])
-		}
-	}
-
-	e.context = errCtx
-
-	return e
-}
-
-func (e err) Produce(code string) {
-
-}
-
-func (e err) GetKind() kind {
-	return e.kind
-}
-
-func (e err) GetMessage() string {
-	return e.message
-}
-
-func (e err) GetContext() context {
-	return e.context
-}
-
-func (e err) GetStackTrace(depth int) string {
-	frames := e.stack.GetFrames()
-	if len(frames) < depth {
-		return frames.ToString()
-	}
-	return frames[:depth].ToString()
-}
 
 func From(er error) err {
 	switch e := er.(type) {
 	case err:
 		return e
 	default:
-		return NewInternalErr().WithMessage(er.Error())
+		return NewInternalErr(er.Error())
 	}
+}
+
+func FromJson(data []byte) (err, error) {
+	e := err{}
+	unmarshalError := json.Unmarshal(data, &e)
+	return e, unmarshalError
 }
 
 func Is(err error, targetErrKind kind) bool {
@@ -90,50 +24,37 @@ func Is(err error, targetErrKind kind) bool {
 	return appErr.kind == targetErrKind
 }
 
-func NewBadRequestErr() err {
+func NewInvalidValueErr(message string) err {
 	return err{
-		kind:  ErrBadRequest,
-		stack: gostacktrace.Get(3),
+		kind:    ErrInvalidValue,
+		message: message,
 	}
 }
 
-func NewInternalErr() err {
+func NewInternalErr(message string) err {
 	return err{
-		kind:  ErrInternal,
-		stack: gostacktrace.Get(3),
+		kind:    ErrInternal,
+		message: message,
 	}
 }
 
-func NewNotFoundErr() err {
+func NewNotFoundErr(message string) err {
 	return err{
-		kind:  ErrNotFound,
-		stack: gostacktrace.Get(3),
+		kind:    ErrNotFound,
+		message: message,
 	}
 }
 
-func NewAccessDeniedErr() err {
+func NewAccessDeniedErr(message string) err {
 	return err{
-		kind:  ErrAccessDenied,
-		stack: gostacktrace.Get(3),
+		kind:    ErrAccessDenied,
+		message: message,
 	}
 }
 
-func NewConflictErr() err {
+func NewConflictErr(message string) err {
 	return err{
-		kind:  ErrConflict,
-		stack: gostacktrace.Get(3),
-	}
-}
-
-func valueToString(val interface{}) string {
-	switch v := val.(type) {
-	case int:
-		return strconv.Itoa(v)
-	case string:
-		return v
-	case error:
-		return v.Error()
-	default:
-		return "unknowntype"
+		kind:    ErrConflict,
+		message: message,
 	}
 }
